@@ -7,6 +7,7 @@
 </head>
 <body>
     <div class="container" id="registration">
+        <h1>Log in</h1>
         <form method="post" action="">
             <div class="input_field">
                 <label for="username">Username: </label>
