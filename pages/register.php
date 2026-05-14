@@ -27,9 +27,15 @@
             </div>
 
             <button type="submit">Submit</button>
-
         </form>
+        <div>
+            <p>Already have an account?</p> <a href="login.php">Log in here</a>
+        </div>
     </div>
     
 </body>
 </html>
+
+<?php 
+
+?>

@@ -14,13 +14,17 @@
                 <input type="text" name="username" id="username">
             </div>
              <div class="input_field">
-                <label for="password">Password: </label>    
-                <input type="text" name="password" id="password">
+                <label for="user_password">Password: </label>    
+                <input type="password" name="password" id="user_password">
             </div>
 
             <button type="submit">Submit</button>
-
         </form>
+        <div>
+            <p>Haven't got an account?</p>
+             <a href="register.php">Register here</a>
+        </div>
+       
     </div>
     
 </body>
