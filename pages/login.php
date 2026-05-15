@@ -18,7 +18,7 @@
                 <input type="password" name="password" id="user_password">
             </div>
 
-            <button type="submit">Submit</button>
+            <button type="submit" name="submit">Submit</button>
         </form>
         <div>
             <p>Haven't got an account?</p>
@@ -29,3 +29,31 @@
     
 </body>
 </html>
+
+<?php
+session_start();
+include '../database/db_connection.php';
+
+if(isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $stmt = $dbh->prepare("SELECT id, password FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if(!$row) {
+        echo 'Username does not exist';
+        exit();
+    }
+
+    if(!password_verify($password, $row['password'])) {
+        echo 'Incorrect password';
+        exit();
+    }
+
+    $_SESSION['user_id'] = $row['id'];
+    header('Location: dashboard.php');
+    exit();
+}
+?>

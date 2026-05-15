@@ -19,11 +19,11 @@
             </div>
              <div class="input_field">
                 <label for="password">Password: </label>    
-                <input type="text" name="password" id="password">
+                <input type="password" name="password" id="password">
             </div>
                 <div class="input_field">
                 <label for="password_check">Re-enter Password: </label>    
-                <input type="text" name="password_check" id="password_check">
+                <input type="password" name="password_check" id="password_check">
             </div>
 
             <button type="submit" name="submit">Submit</button>
@@ -45,8 +45,9 @@
     $password = $_POST['password'];
     $password_check = $_POST['password_check'];
 
-    $securePass = password_hash($password, PASSWORD_DEFAULT);
-    if ($securePass != $password_check) { echo 'Passwords do not match'; exit();}
+    if ($password != $password_check) { echo 'Passwords do not match'; exit();}
+    $secure_pass = password_hash($password, PASSWORD_DEFAULT);
+
 
     $stmt = $dbh->prepare("SELECT email FROM users WHERE email = ?");
     $stmt->execute([$_POST['email']]);
@@ -54,9 +55,9 @@
     if ($count > 0) {echo 'email already exists'; exit();}
 
     $stmt = $dbh->prepare("SELECT username FROM users WHERE username = ?");
-    $stmt->execute([$_POST['usernam']]);
+    $stmt->execute([$_POST['username']]);
     $count = $stmt->rowCount();
-    if ($count > 0) {echo 'username already exists', exit();}
+    if ($count > 0) {echo 'username already exists'; exit();}
 
     $stmt = $dbh->prepare('INSERT INTO users (username, email, password) VALUES (:username, :email, :password)');
 
@@ -65,7 +66,7 @@
     $stmt->bindParam(':password', $secure_pass);
 
     $stmt->execute();
-    header('login.php');
+    header('Location: login.php');
     exit();
     }
 ?>
