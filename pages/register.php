@@ -1,35 +1,37 @@
 <?php 
     include '../database/db_connection.php';
-
     if(isset($_POST['submit'])){
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $password_check = $_POST['password_check'];
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $password_check = $_POST['password_check'];
+        $errors = []; 
 
-    if ($password != $password_check) { echo 'Passwords do not match'; exit();}
-    $secure_pass = password_hash($password, PASSWORD_DEFAULT);
+        if(empty($username)) { $errors[] = 'Username is required'; } 
+        if(empty($email)) { $errors[] = 'Email is required'; }
+        if(empty($password)) { $errors[] = 'Password is required'; }
+        if(empty($password_check)) { $errors[] = 'Re-enter password is required'; }
 
+        if($password != $password_check) { $errors[] = 'Passwords do not match'; }
 
-    $stmt = $dbh->prepare("SELECT email FROM users WHERE email = ?");
-    $stmt->execute([$_POST['email']]);
-    $count = $stmt->rowCount();
-    if ($count > 0) {echo 'email already exists'; exit();}
+        $stmt = $dbh->prepare("SELECT email FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        if($stmt->rowCount() > 0) { $errors[] = 'Email already exists'; }
 
-    $stmt = $dbh->prepare("SELECT username FROM users WHERE username = ?");
-    $stmt->execute([$_POST['username']]);
-    $count = $stmt->rowCount();
-    if ($count > 0) {echo 'username already exists'; exit();}
+        $stmt = $dbh->prepare("SELECT username FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        if($stmt->rowCount() > 0) { $errors[] = 'Username already exists'; }
 
-    $stmt = $dbh->prepare('INSERT INTO users (username, email, password) VALUES (:username, :email, :password)');
-
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':password', $secure_pass);
-
-    $stmt->execute();
-    header('Location: login.php');
-    exit();
+        if(empty($errors)) {
+            $secure_pass = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $dbh->prepare('INSERT INTO users (username, email, password) VALUES (:username, :email, :password)');
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password', $secure_pass);
+            $stmt->execute();
+            header('Location: login.php');
+            exit();
+        }
     }
 ?>
 
@@ -44,6 +46,13 @@
 <body>
     <div class="container" id="registration">
         <h1>Register</h1>
+        <?php if(!empty($errors)): ?>
+            <div class="errors">
+                <?php foreach($errors as $error): ?>
+                    <p><?php echo $error; ?></p>
+                <?php endforeach; ?>
+            </div>
+<?php endif; ?>
         <form method="post" action="register.php">
             <div class="input_field">
                 <label for="username">Username: </label>
