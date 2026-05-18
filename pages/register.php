@@ -1,14 +1,16 @@
 <?php 
     include '../database/db_connection.php';
+    $errors = []; 
     if(isset($_POST['submit'])){
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
         $password_check = $_POST['password_check'];
-        $errors = []; 
+   
 
         if(empty($username)) { $errors[] = 'Username is required'; } 
         if(empty($email)) { $errors[] = 'Email is required'; }
+        if(!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)){ $errors[] = 'Invalid email format'; }
         if(empty($password)) { $errors[] = 'Password is required'; }
         if(empty($password_check)) { $errors[] = 'Re-enter password is required'; }
 
@@ -60,7 +62,7 @@
             </div>
             <div class="input_field">
                 <label for="email">Email: </label>
-                <input type="text" name="email" id="email">
+                <input type="email" name="email" id="email">
             </div>
              <div class="input_field">
                 <label for="password">Password: </label>    
