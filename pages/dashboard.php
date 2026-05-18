@@ -26,5 +26,8 @@ $username = $row['username'];
         <h1>Welcome to the dashbord</h1>
         <h2><?php echo $username; ?></h2>
     </div>
+    <div>
+        <a href="logout.php">Log out</a>
+    </div>
 </body>
 </html>

@@ -54,7 +54,7 @@
                     <p><?php echo $error; ?></p>
                 <?php endforeach; ?>
             </div>
-<?php endif; ?>
+        <?php endif; ?>
         <form method="post" action="register.php">
             <div class="input_field">
                 <label for="username">Username: </label>

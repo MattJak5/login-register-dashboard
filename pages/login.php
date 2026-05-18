@@ -1,3 +1,35 @@
+<?php
+session_start();
+include '../database/db_connection.php';
+
+$errors = [];
+if(isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    if(empty($username)) { $errors[] = 'Please enter you username';}
+    if(empty($password)) { $errors[] = 'Please enter your password';}
+
+    if(empty($errors)) {
+        $stmt = $dbh->prepare("SELECT id, password FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if(!$row) {
+            $errors[] = 'Username does not exist';
+        } else {
+        if(!password_verify($password, $row['password'])) {
+            $errors[] = 'Incorrect password';
+        } else {
+            $_SESSION['user_id'] = $row['id'];
+            header('Location: dashboard.php');
+            exit();
+            }
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +38,13 @@
     <title>Document</title>
 </head>
 <body>
+    <?php if(!empty($errors)): ?>
+    <div class="errors">
+        <?php foreach($errors as $error): ?>
+            <p><?php echo $error; ?></p>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
     <div class="container" id="registration">
         <h1>Log in</h1>
         <form method="post" action="">
@@ -29,31 +68,3 @@
     
 </body>
 </html>
-
-<?php
-session_start();
-include '../database/db_connection.php';
-
-if(isset($_POST['submit'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $stmt = $dbh->prepare("SELECT id, password FROM users WHERE username = ?");
-    $stmt->execute([$username]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if(!$row) {
-        echo 'Username does not exist';
-        exit();
-    }
-
-    if(!password_verify($password, $row['password'])) {
-        echo 'Incorrect password';
-        exit();
-    }
-
-    $_SESSION['user_id'] = $row['id'];
-    header('Location: dashboard.php');
-    exit();
-}
-?>
